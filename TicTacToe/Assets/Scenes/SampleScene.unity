@@ -247,6 +247,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player1Type: 0
   Player2Type: 1
+  aiRecursionDepth: 5
+  gameOver: 0
   x: {fileID: 661651695530127997, guid: ff76ae21ef707e34893758f68963ec22, type: 3}
   o: {fileID: 7413537564529687920, guid: 44ccabf93f09d5b4f886b53cb145cb8f, type: 3}
 --- !u!4 &931739850

@@ -53,8 +53,8 @@
     <UnityVersion>2020.2.6f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\TakeTurnsOverloads.cs" />
+    <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\ObjectClasses.cs" />
   </ItemGroup>
   <ItemGroup>

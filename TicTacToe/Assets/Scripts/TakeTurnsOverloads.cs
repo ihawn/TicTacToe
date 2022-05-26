@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TakeTurns;
 using TakeTurns.Containers;
+using TakeTurns.Enumerations;
 using System.Linq;
 
 public class TakeTurnsOverloads : TakeTurns<TicTacToeBoard, Piece, Move>
@@ -12,6 +13,10 @@ public class TakeTurnsOverloads : TakeTurns<TicTacToeBoard, Piece, Move>
     // This function is extremely game specific and will play a large part in determining how good your AI is
     public override float GetGameEvaluation(TicTacToeBoard space)
     {
+        var endStateEvaluation = EndGameReached(space);
+        if (endStateEvaluation.Item1) //It's recommended to put an infinite penalty for the other player winning
+            return endStateEvaluation.Item2 == EndState.MaxPlayerWins ? float.MaxValue : (endStateEvaluation.Item2 == EndState.MinPlayerWins ? float.MinValue : 0);
+     
         float eval = 0;
         int xCount;
         int oCount;
@@ -64,38 +69,42 @@ public class TakeTurnsOverloads : TakeTurns<TicTacToeBoard, Piece, Move>
 
         eval += xCount - oCount;
 
-
         return eval;
     }
 
-    // A bit clunky but gets the job done
-    public override bool EndGameReached(TicTacToeBoard space)
+    //Returns if the game is over and who won (or if there is a tie)
+    public override (bool, EndState) EndGameReached(TicTacToeBoard space)
     {
         int xCount;
         int oCount;
         for (int i = 0; i < 3; i++)
         {
+            //vertical
             xCount = space.Pieces.Count(p => p.x == i && p.isX);
             oCount = space.Pieces.Count(p => p.x == i && !p.isX);
             if (xCount == 3 || oCount == 3)
-                return true;
+                return (true, xCount == 3 ? EndState.MaxPlayerWins : EndState.MinPlayerWins);
+
+            //horizontal
             xCount = space.Pieces.Count(p => p.y == i && p.isX);
             oCount = space.Pieces.Count(p => p.y == i && !p.isX);
             if (xCount == 3 || oCount == 3)
-                return true;
+                return (true, xCount == 3 ? EndState.MaxPlayerWins : EndState.MinPlayerWins);
         }
 
+        //diagonal 1
         xCount = space.Pieces.Count(p => p.y == p.x && p.isX);
-        oCount = space.Pieces.Count(p => p.y == p.y && !p.isX);
+        oCount = space.Pieces.Count(p => p.y == p.x && !p.isX);
         if (xCount == 3 || oCount == 3)
-            return true;
+            return (true, xCount == 3 ? EndState.MaxPlayerWins : EndState.MinPlayerWins);
 
-        xCount = space.Pieces.Count(p => p.y == 3 - p.x && p.isX);
-        oCount = space.Pieces.Count(p => p.y == 3 - p.y && !p.isX);
+        //diagonal 2
+        xCount = space.Pieces.Count(p => p.y == 2 - p.x && p.isX);
+        oCount = space.Pieces.Count(p => p.y == 2 - p.x && !p.isX);
         if (xCount == 3 || oCount == 3)
-            return true;
+            return (true, xCount == 3 ? EndState.MaxPlayerWins : EndState.MinPlayerWins);
 
-        return space.Pieces.Count() == 9;
+        return (space.Pieces.Count() == 9, EndState.Tie);
     }
 
     public override IList<MinimaxInput<TicTacToeBoard, Piece, Move, float>> GetPositions(TicTacToeBoard space, bool isMaxPlayer)
@@ -167,6 +176,7 @@ public class Move
 }
 
 //not needed but recommended to shuffle the move lists (prevents the same move from being made for the same situation)
+//from: https://stackoverflow.com/questions/273313/randomize-a-listt
 static class ShuffleExtension
 {
     private static System.Random rng = new System.Random();

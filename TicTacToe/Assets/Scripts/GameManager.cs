@@ -9,14 +9,15 @@ public class GameManager : MonoBehaviour
     public TicTacToe Game;
     public PlayerType Player1Type;
     public PlayerType Player2Type;
+    public int aiRecursionDepth = 5;
+    public bool gameOver;
 
     public GameObject x;
     public GameObject o;
     public static GameObject X;
     public static GameObject O;
 
-    //object instance of overload container
-    TakeTurnsOverloads TakeTurns;
+    TakeTurnsOverloads TakeTurns; //object instance of overload container
 
     void Start()
     {
@@ -29,7 +30,8 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        GetInput();
+        if(!gameOver)
+            GetInput();
     }
 
     void GetInput()
@@ -74,9 +76,7 @@ public class GameManager : MonoBehaviour
 
     void GetAiInput()
     {
-        var result = TakeTurns.GetBestMove(Game.Board, 5, CurrentPlayer.isX);
-        if(result.Moves.Count == 0)
-            result.Moves = TakeTurns.GetPositions(Game.Board, false).Select(m => m.Moves[0]).ToList();
+        var result = TakeTurns.GetBestMove(Game.Board, aiRecursionDepth, CurrentPlayer.isX);
 
         Piece p = new Piece()
         {
@@ -96,6 +96,7 @@ public class GameManager : MonoBehaviour
 
     void SwitchPlayer()
     {
+        gameOver = TakeTurns.EndGameReached(Game.Board).Item1;
         CurrentPlayer = CurrentPlayer == Game.Player1 ? Game.Player2 : Game.Player1;
     }
 
