@@ -80,8 +80,8 @@ public class GameManager : MonoBehaviour
 
         Piece p = new Piece()
         {
-            x = result.Moves[0].x,
-            y = result.Moves[0].y,
+            x = result.Move.x,
+            y = result.Move.y,
             isX = CurrentPlayer.isX
         };
         Game.Board.Pieces.Add(p);

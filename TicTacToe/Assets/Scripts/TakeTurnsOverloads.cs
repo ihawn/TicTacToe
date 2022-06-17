@@ -126,7 +126,7 @@ public class TakeTurnsOverloads : TakeTurns<TicTacToeBoard, Piece, Move>
                     TicTacToeBoard copyBoard = new TicTacToeBoard(space);
                     copyBoard.Pieces.Add(p);
 
-                    positionList.Add(new MinimaxInput<TicTacToeBoard, Piece, Move, float>(copyBoard, new List<Move> { new Move { x = i, y = j } }, p)); 
+                    positionList.Add(new MinimaxInput<TicTacToeBoard, Piece, Move, float>(copyBoard, p, new Move { x = i, y = j })); 
                 }
             }
         }
