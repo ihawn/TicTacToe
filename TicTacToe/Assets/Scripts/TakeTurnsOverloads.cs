@@ -15,7 +15,7 @@ public class TakeTurnsOverloads : TakeTurns<TicTacToeBoard, Piece, Move>
     {
         var endStateEvaluation = EndGameReached(space);
         if (endStateEvaluation.Item1) //It's recommended to put an infinite penalty for the other player winning
-            return endStateEvaluation.Item2 == EndState.MaxPlayerWins ? float.MaxValue : (endStateEvaluation.Item2 == EndState.MinPlayerWins ? float.MinValue : 0);
+            return endStateEvaluation.Item2 == EndState.MaxPlayerWins ? 1000000 : (endStateEvaluation.Item2 == EndState.MinPlayerWins ? -1000000 : 0);
      
         float eval = 0;
         int xCount;
@@ -115,7 +115,7 @@ public class TakeTurnsOverloads : TakeTurns<TicTacToeBoard, Piece, Move>
         {
             for(int j = 0; j < 3; j++)
             {
-                if(space.Pieces.Count(p => p.x == i && p.y == j) == 0) // empty space
+                if(!space.Pieces.Select(i => (i.x, i.y)).Contains((i, j))) // empty space
                 {
                     Piece p = new Piece()
                     {
@@ -126,7 +126,7 @@ public class TakeTurnsOverloads : TakeTurns<TicTacToeBoard, Piece, Move>
                     TicTacToeBoard copyBoard = new TicTacToeBoard(space);
                     copyBoard.Pieces.Add(p);
 
-                    positionList.Add(new MinimaxInput<TicTacToeBoard, Piece, Move, float>(copyBoard, p, new Move { x = i, y = j })); 
+                    positionList.Add(new MinimaxInput<TicTacToeBoard, Piece, Move, float>(copyBoard, p, new Move { x = i, y = j }));
                 }
             }
         }
@@ -167,12 +167,23 @@ public class Piece
     public int x { get; set; }
     public int y { get; set; }
     public bool isX { get; set; }
+
+    public Piece()
+    {
+        x = -1;
+        y = -1;
+    }
 }
 
 public class Move
 {
     public int x { get; set; }
     public int y { get; set; }
+    public Move()
+    {
+        x = -1;
+        y = -1;
+    }
 }
 
 //not needed but recommended to shuffle the move lists (prevents the same move from being made for the same situation)
